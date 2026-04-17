@@ -66,6 +66,9 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import android.graphics.Color;
+
+import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
 
 import org.shadowice.flocke.andotp.Database.Entry;
@@ -225,7 +228,18 @@ public class MainActivity extends BaseActivity
             afterAuthentication();
 
         speedDial = findViewById(R.id.speedDial);
-        speedDial.inflate(R.menu.menu_fab);
+        speedDial.addActionItem(new SpeedDialActionItem.Builder(R.id.fabEnterDetails, R.drawable.ic_edit_white)
+                .setLabel(getString(R.string.button_enter_details))
+                .setFabImageTintColor(Color.WHITE)
+                .create());
+        speedDial.addActionItem(new SpeedDialActionItem.Builder(R.id.fabScanQRFromImage, R.drawable.ic_image_white)
+                .setLabel(getString(R.string.button_qr_from_image))
+                .setFabImageTintColor(Color.WHITE)
+                .create());
+        speedDial.addActionItem(new SpeedDialActionItem.Builder(R.id.fabScanQR, R.drawable.ic_camera_white)
+                .setLabel(getString(R.string.button_scan_qr))
+                .setFabImageTintColor(Color.WHITE)
+                .create());
 
         speedDial.getMainFab().setContentDescription(getString(R.string.button_add));
 
