@@ -56,6 +56,7 @@ import org.shadowice.flocke.andotp.Utilities.BackupHelper;
 import org.shadowice.flocke.andotp.Utilities.Constants;
 import org.shadowice.flocke.andotp.Utilities.DatabaseHelper;
 import org.shadowice.flocke.andotp.Utilities.EncryptionHelper;
+import org.shadowice.flocke.andotp.Utilities.EncryptionKeyHolder;
 import org.shadowice.flocke.andotp.Utilities.KeyStoreHelper;
 import org.shadowice.flocke.andotp.Utilities.Settings;
 import org.shadowice.flocke.andotp.Utilities.UIHelper;
@@ -93,17 +94,12 @@ public class SettingsActivity extends BackgroundTaskActivity<ChangeEncryptionTas
         stub.inflate();
 
         Intent callingIntent = getIntent();
-        byte[] keyMaterial = callingIntent.getByteArrayExtra(Constants.EXTRA_SETTINGS_ENCRYPTION_KEY);
+        byte[] keyMaterial = EncryptionKeyHolder.getInstance().getEncryptionKey();
         if (keyMaterial != null && keyMaterial.length > 0)
             encryptionKey = EncryptionHelper.generateSymmetricKey(keyMaterial);
 
         if (savedInstanceState != null) {
             encryptionChanged = savedInstanceState.getBoolean(Constants.EXTRA_SETTINGS_ENCRYPTION_CHANGED, false);
-
-            byte[] encKey = savedInstanceState.getByteArray(Constants.EXTRA_SETTINGS_ENCRYPTION_KEY);
-            if (encKey != null) {
-                encryptionKey = EncryptionHelper.generateSymmetricKey(encKey);
-            }
         }
 
         fragment = new SettingsFragment();
@@ -123,7 +119,8 @@ public class SettingsActivity extends BackgroundTaskActivity<ChangeEncryptionTas
         super.onSaveInstanceState(outState);
 
         outState.putBoolean(Constants.EXTRA_SETTINGS_ENCRYPTION_CHANGED, encryptionChanged);
-        outState.putByteArray(Constants.EXTRA_SETTINGS_ENCRYPTION_KEY, encryptionKey.getEncoded());
+        if (encryptionKey != null)
+            EncryptionKeyHolder.getInstance().setEncryptionKey(encryptionKey.getEncoded());
     }
 
     public void finishWithResult() {
@@ -131,7 +128,7 @@ public class SettingsActivity extends BackgroundTaskActivity<ChangeEncryptionTas
 
         data.putExtra(Constants.EXTRA_SETTINGS_ENCRYPTION_CHANGED, encryptionChanged);
         if (encryptionKey != null)
-            data.putExtra(Constants.EXTRA_SETTINGS_ENCRYPTION_KEY, encryptionKey.getEncoded());
+            EncryptionKeyHolder.getInstance().setEncryptionKey(encryptionKey.getEncoded());
 
         setResult(RESULT_OK, data);
         finish();
@@ -272,7 +269,7 @@ public class SettingsActivity extends BackgroundTaskActivity<ChangeEncryptionTas
 
         if (requestCode == Constants.INTENT_SETTINGS_AUTHENTICATE) {
             if (resultCode == RESULT_OK) {
-                byte[] authKey = data.getByteArrayExtra(Constants.EXTRA_AUTH_PASSWORD_KEY);
+                byte[] authKey = EncryptionKeyHolder.getInstance().getEncryptionKey();
                 String newEnc = data.getStringExtra(Constants.EXTRA_AUTH_NEW_ENCRYPTION);
 
                 if (authKey != null && authKey.length > 0 && newEnc != null && !newEnc.isEmpty()) {

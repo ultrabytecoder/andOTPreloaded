@@ -49,6 +49,7 @@ import org.shadowice.flocke.andotp.Tasks.AuthenticationTask;
 import org.shadowice.flocke.andotp.Tasks.AuthenticationTask.Result;
 import org.shadowice.flocke.andotp.Utilities.Constants;
 import org.shadowice.flocke.andotp.Utilities.EditorActionHelper;
+import org.shadowice.flocke.andotp.Utilities.EncryptionKeyHolder;
 import org.shadowice.flocke.andotp.View.AutoFillable.AutoFillableTextInputEditText;
 
 import static org.shadowice.flocke.andotp.Utilities.Constants.AuthMethod;
@@ -213,7 +214,7 @@ public class AuthenticateActivity extends BackgroundTaskActivity<AuthenticationT
         if (newEncryption != null && !newEncryption.isEmpty())
             data.putExtra(Constants.EXTRA_AUTH_NEW_ENCRYPTION, newEncryption);
         if (encryptionKey != null)
-            data.putExtra(Constants.EXTRA_AUTH_PASSWORD_KEY, encryptionKey);
+            EncryptionKeyHolder.getInstance().setEncryptionKey(encryptionKey);
         if (success)
             setResult(RESULT_OK, data);
         finish();

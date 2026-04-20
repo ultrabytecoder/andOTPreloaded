@@ -89,17 +89,12 @@ public class Constants {
     public static final int INTENT_SETTINGS_BACKUP_LOCATION     = 301;
 
     // Intent extras
-    public final static String EXTRA_AUTH_PASSWORD_KEY              = "password_key";
     public final static String EXTRA_AUTH_NEW_ENCRYPTION            = "new_encryption";
     public final static String EXTRA_AUTH_MESSAGE                   = "message";
 
-    public final static String EXTRA_BACKUP_ENCRYPTION_KEY          = "encryption_key";
-
     public final static String EXTRA_INTRO_FINISHED                 = "setup_finished";
-    public final static String EXTRA_INTRO_ENCRYPTION_KEY           = "encryption_key";
 
     public final static String EXTRA_SETTINGS_ENCRYPTION_CHANGED    = "encryption_changed";
-    public final static String EXTRA_SETTINGS_ENCRYPTION_KEY        = "encryption_key";
 
     // Encryption algorithms and definitions
     final static String ALGORITHM_SYMMETRIC     = "AES/GCM/NoPadding";
