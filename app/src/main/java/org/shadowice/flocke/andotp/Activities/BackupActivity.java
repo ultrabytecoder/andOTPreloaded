@@ -65,6 +65,7 @@ import org.shadowice.flocke.andotp.Utilities.BackupHelper;
 import org.shadowice.flocke.andotp.Utilities.Constants;
 import org.shadowice.flocke.andotp.Utilities.DatabaseHelper;
 import org.shadowice.flocke.andotp.Utilities.EncryptionHelper;
+import org.shadowice.flocke.andotp.Utilities.EncryptionKeyHolder;
 import org.shadowice.flocke.andotp.Utilities.Tools;
 
 import java.io.ByteArrayInputStream;
@@ -116,7 +117,7 @@ public class BackupActivity extends BackgroundTaskActivity<BackupTaskResult> {
         View v = stub.inflate();
 
         Intent callingIntent = getIntent();
-        byte[] keyMaterial = callingIntent.getByteArrayExtra(Constants.EXTRA_BACKUP_ENCRYPTION_KEY);
+        byte[] keyMaterial = EncryptionKeyHolder.getInstance().getEncryptionKey();
         encryptionKey = EncryptionHelper.generateSymmetricKey(keyMaterial);
 
         Spinner spBackupType = v.findViewById(R.id.backupType);

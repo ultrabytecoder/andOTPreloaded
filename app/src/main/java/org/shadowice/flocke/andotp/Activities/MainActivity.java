@@ -76,6 +76,7 @@ import org.shadowice.flocke.andotp.Dialogs.HideableDialog;
 import org.shadowice.flocke.andotp.R;
 import org.shadowice.flocke.andotp.Utilities.Constants;
 import org.shadowice.flocke.andotp.Utilities.EncryptionHelper;
+import org.shadowice.flocke.andotp.Utilities.EncryptionKeyHolder;
 import org.shadowice.flocke.andotp.Utilities.KeyStoreHelper;
 import org.shadowice.flocke.andotp.Utilities.NotificationHelper;
 import org.shadowice.flocke.andotp.Utilities.ScanQRCodeFromFile;
@@ -112,7 +113,6 @@ public class MainActivity extends BaseActivity
     private boolean requireAuthentication = false;
 
     private boolean recreateActivity = false;
-    private boolean cacheEncKey = false;
     private boolean focusSearchOnCreate = false;
 
     private Handler handler;
@@ -322,7 +322,7 @@ public class MainActivity extends BaseActivity
         });
 
         if (savedInstanceState != null) {
-            byte[] encKey = savedInstanceState.getByteArray("encKey");
+            byte[] encKey = EncryptionKeyHolder.getInstance().getEncryptionKey();
             if (encKey != null) {
                 adapter.setEncryptionKey(EncryptionHelper.generateSymmetricKey(encKey));
                 requireAuthentication = false;
@@ -484,11 +484,6 @@ public class MainActivity extends BaseActivity
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("filterString", filterString);
-
-        if (cacheEncKey) {
-            outState.putByteArray("encKey", adapter.getEncryptionKey().getEncoded());
-            cacheEncKey = false;
-        }
     }
 
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -539,13 +534,12 @@ public class MainActivity extends BaseActivity
             }
         } else if (requestCode == Constants.INTENT_MAIN_SETTINGS && resultCode == RESULT_OK) {
             boolean encryptionChanged = intent.getBooleanExtra(Constants.EXTRA_SETTINGS_ENCRYPTION_CHANGED, false);
-            byte[] newKey = intent.getByteArrayExtra(Constants.EXTRA_SETTINGS_ENCRYPTION_KEY);
+            byte[] newKey = EncryptionKeyHolder.getInstance().getEncryptionKey();
 
             if (encryptionChanged)
                 updateEncryption(newKey);
 
             if (recreateActivity) {
-                cacheEncKey = true;
                 recreate();
             }
         } else if (requestCode == Constants.INTENT_MAIN_AUTHENTICATE) {
@@ -555,10 +549,7 @@ public class MainActivity extends BaseActivity
             } else {
                 requireAuthentication = false;
 
-                byte[] authKey = null;
-
-                if (intent != null)
-                    authKey = intent.getByteArrayExtra(Constants.EXTRA_AUTH_PASSWORD_KEY);
+                byte[] authKey = EncryptionKeyHolder.getInstance().getEncryptionKey();
 
                 updateEncryption(authKey);
 
@@ -577,7 +568,7 @@ public class MainActivity extends BaseActivity
             if (setupFinished) {
                 requireAuthentication = false;
 
-                byte [] encryptionKey = intent.getByteArrayExtra(Constants.EXTRA_INTRO_ENCRYPTION_KEY);
+                byte [] encryptionKey = EncryptionKeyHolder.getInstance().getEncryptionKey();
                 updateEncryption(encryptionKey);
 
                 afterAuthentication();
@@ -704,13 +695,14 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.action_backup) {
+            if (adapter.getEncryptionKey() != null)
+                EncryptionKeyHolder.getInstance().setEncryptionKey(adapter.getEncryptionKey().getEncoded());
             Intent backupIntent = new Intent(this, BackupActivity.class);
-            backupIntent.putExtra(Constants.EXTRA_BACKUP_ENCRYPTION_KEY, adapter.getEncryptionKey().getEncoded());
             startActivityForResult(backupIntent, Constants.INTENT_MAIN_BACKUP);
         } else if (id == R.id.action_settings) {
-            Intent settingsIntent = new Intent(this, SettingsActivity.class);
             if (adapter.getEncryptionKey() != null)
-                settingsIntent.putExtra(Constants.EXTRA_SETTINGS_ENCRYPTION_KEY, adapter.getEncryptionKey().getEncoded());
+                EncryptionKeyHolder.getInstance().setEncryptionKey(adapter.getEncryptionKey().getEncoded());
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivityForResult(settingsIntent, Constants.INTENT_MAIN_SETTINGS);
         } else if (id == R.id.action_about){
             Intent aboutIntent = new Intent(this, AboutActivity.class);

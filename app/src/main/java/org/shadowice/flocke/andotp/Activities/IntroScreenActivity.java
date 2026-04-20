@@ -63,6 +63,7 @@ import org.shadowice.flocke.andotp.Tasks.FinishIntroTask;
 import org.shadowice.flocke.andotp.Utilities.ConfirmedPasswordTransformationHelper;
 import org.shadowice.flocke.andotp.Utilities.Constants;
 import org.shadowice.flocke.andotp.Utilities.EditorActionHelper;
+import org.shadowice.flocke.andotp.Utilities.EncryptionKeyHolder;
 import org.shadowice.flocke.andotp.Utilities.UIHelper;
 
 public class IntroScreenActivity extends IntroActivity {
@@ -159,7 +160,8 @@ public class IntroScreenActivity extends IntroActivity {
     public Intent onSendActivityResult(int result) {
         Intent data = new Intent();
         data.putExtra(Constants.EXTRA_INTRO_FINISHED, setupFinished);
-        data.putExtra(Constants.EXTRA_INTRO_ENCRYPTION_KEY, encryptionKey);
+        if (encryptionKey != null)
+            EncryptionKeyHolder.getInstance().setEncryptionKey(encryptionKey);
 
         return data;
     }
