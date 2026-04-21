@@ -23,4 +23,16 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew assembleFdroidRelease
+      run: ./gradlew assembleFdroidRelease assembleFdroidDebug
+
+    - name: Upload Release APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-fdroid-release
+        path: app/build/outputs/apk/fdroid/release/*.apk
+
+    - name: Upload Debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-fdroid-debug
+        path: app/build/outputs/apk/fdroid/debug/*.apk
