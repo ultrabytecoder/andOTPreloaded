@@ -1,9 +1,5 @@
 #  andOTP Reloaded -  Android OTP Authenticator
 
-![andOTP](./assets/logo.png)
-
-See [this XDA post](https://forum.xda-developers.com/t/app-4-4-open-source-andotp-open-source-two-factor-authentication-for-android.3636993/post-87021655) for more details.
-
 ## Intro
 
 andOTP Reloaded is a two-factor authentication App for Android 5.1+.
@@ -11,8 +7,7 @@ andOTP Reloaded is a two-factor authentication App for Android 5.1+.
 It implements Time-based One-time Passwords (TOTP) and HMAC-Based One-Time Passwords (HOTP).
 Simply scan the QR code and login with the generated 6-digit code.
 
-This project started out as a fork of the great [AndOTP](https://github.com/andOTP/andOTP) app,
-which has been unmaintained since 2022. 
+This project started out as a fork of the great [AndOTP](https://github.com/andOTP/andOTP) app, which has been unmaintained since 2022. The further development will focus on strengthening authentication security, implementing resilient cloud-based backup and recovery mechanisms, and enabling flexible multi-profile support to ensure scalable, user-centric access management.
 
 ## Features:
 
